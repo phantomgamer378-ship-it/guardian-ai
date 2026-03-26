@@ -1,19 +1,16 @@
-# Deploy to Render
-
-# 1. Create render.yaml
-runtime: python
-buildCommand: "pip install -r requirements.txt"
-startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
-
-# 2. Push to GitHub
-git init
-git add .
-git commit -m "Initial Guardian AI deployment"
-git branch -M main
-git remote add origin https://github.com/yourusername/guardian-ai.git
-git push -u origin main
-
-# 3. Deploy on Render
-# Go to render.com → New → Web Service
-# Connect GitHub repo
-# Auto-deploys on push
+services:
+  - type: web
+    name: guardian-ai-chatbot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: sqlite:///./guardianai.db
+    autoDeploy: true
